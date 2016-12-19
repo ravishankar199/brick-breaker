@@ -8,22 +8,33 @@ CONFIG = RawConfigParser()
 CONFIG.read('./.config')
 
 def create_bricks(row_count, col_count, width, height, special_count):
+    """
+    Creates and returns a list of 2 lists - normal bricks and special bricks
+    """
+    
+    # spaces between bricks
     space_y=5
     space_x=10
  
+    # start placing bricks from these pointers
     hor_ptr = 5
     ver_ptr = -120
  
     bricks=[]
+
     for _ in range(row_count):
         hor_ptr = 5
         for __ in range(col_count):
+	    # append a Brick to the list of bricks
             bricks.append(Brick(init_x=hor_ptr, init_y=ver_ptr, width=width, height=height).create())
+
             hor_ptr += width + space_x
         ver_ptr += height + space_y
 
+
+    # get a random sample from all the bricks created
+    # delete chosen sample from the original list of bricks
     special_bricks = random.sample(bricks, special_count)
-    
     bricks = [brick for brick in bricks if brick not in special_bricks]
 
     all_bricks = [bricks, special_bricks]
@@ -35,6 +46,7 @@ if __name__=='__main__':
     Initialize screen and all components and launch the game
     """
 
+    # initializing from config
     game_config = {}
     game_config['screen_width'] = CONFIG.getint('SCREEN', 'WIDTH')
     game_config['screen_height'] = CONFIG.getint('SCREEN', 'HEIGHT')
@@ -59,13 +71,10 @@ if __name__=='__main__':
     game_config['pad_init_y'] = CONFIG.getint('PAD', 'INIT_Y')
     game_config['pad_color'] = [int(rgb) for rgb in CONFIG.get('PAD', 'COLOR').split(',')]
  
-    screen = pygame.display.set_mode((game_config['screen_width'], game_config['screen_height']),0,32)
+    game_config['lives'] = CONFIG.getint('GAME', 'LIVES')
 
-    bricks = create_bricks(game_config['brick_row_count'],
-                           game_config['brick_col_count'],
-                           game_config['brick_width'],
-                           game_config['brick_height'],
-                           game_config['brick_special_count'])
+    # setting screen and creating ball and pad
+    screen = pygame.display.set_mode((game_config['screen_width'], game_config['screen_height']),0,32)
 
     pad = Pad(width=game_config['pad_width'], height=game_config['pad_height'],
               init_x=game_config['pad_init_x'], init_y=game_config['pad_init_y'],
@@ -77,8 +86,19 @@ if __name__=='__main__':
                 ver_vel=game_config['ball_ver_velocity']).create()
 
 
-    brick_breaker = BrickBreaker(screen=screen, ball=ball[0], pad=pad[0], bricks=bricks,
-                                 ball_config=ball[1],pad_config=pad[1],
+    while True:
+        # create new bricks before each game
+	bricks = create_bricks(game_config['brick_row_count'],
+	                       game_config['brick_col_count'],
+			       game_config['brick_width'],
+	                       game_config['brick_height'],
+	                       game_config['brick_special_count'])
+
+
+   	# initializing main game with components and their config
+    	brick_breaker = BrickBreaker(screen=screen, ball=ball[0], pad=pad[0], bricks=bricks,
+                                 ball_config=ball[1],pad_config=pad[1], lives=game_config['lives'],
 				 bgcolor=game_config['screen_bgcolor'])
 
-    brick_breaker.main()
+    	# launching the game
+    	brick_breaker.main()

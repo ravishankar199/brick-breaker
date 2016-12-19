@@ -15,7 +15,7 @@ class BrickBreaker:
         clock = pygame.time.Clock()
 
 	def __init__(self, screen=None, ball=None, pad=None, bricks=None,
-	             ball_config=None, pad_config=None, bgcolor=None):
+	             ball_config=None, pad_config=None, lives=0, bgcolor=None):
 		"""
 		Initializes screen, ball, pad, bricks, background color and font
 		"""
@@ -26,6 +26,7 @@ class BrickBreaker:
 		self.pad_config = pad_config
 		self.bricks = bricks
 		self.brick_colors = [(201,41,76), (255,215,0)]
+		self.lives = lives
 		self.bgcolor = bgcolor
 		self.font = pygame.font.Font(None, 50)
 
@@ -91,7 +92,7 @@ class BrickBreaker:
 		pad_left = False
                 pad_right = False
                                 
-		lives = 3
+		self.lives = 3
                 flag = False
 
 		now = pygame.time.get_ticks()
@@ -147,21 +148,20 @@ class BrickBreaker:
 					self.pad.left = 350
                                         self.pad.top = 470
 
-					lives -= 1
-					if lives != 0:
+					self.lives -= 1
+					if self.lives != 0:
 						time.sleep(0.5)
 						self.msg('Try again!!', 230, 100)
 						time.sleep(0.5)
 
-					elif lives == 0:
+					elif self.lives == 0:
 						self.msg('Game Over', 230, 100)
 						pygame.display.flip()
 
 						self.screen.fill(self.bgcolor)
 						time.sleep(2)
 
-						lives = 4
-						flag = True
+						return
 
 					pygame.display.flip()
                                 
@@ -200,8 +200,8 @@ class BrickBreaker:
                         self.clock.tick(50)
                         self.draw_components()
                         
-                        if lives >= 0:
-                                self.msg('Lives : {}'.format(lives), 240, 5)
+                        if self.lives >= 0:
+                                self.msg('Lives : {}'.format(self.lives), 240, 5)
 
                         brick_count=0 
                         for brcks in self.bricks:
@@ -209,7 +209,7 @@ class BrickBreaker:
                                 	if brick.top > 0 :
                                         	brick_count += 1
 
-                        if brick_count == 0 and lives != 0 and not flag:
+                        if brick_count == 0 and self.lives != 0 and not flag:
                                         self.msg('You Win',230 , 100)
                                         
 					pygame.display.flip()
@@ -217,13 +217,6 @@ class BrickBreaker:
 					self.screen.fill(self.bgcolor)
                                         time.sleep(2)
 
-                                        lives=4
-					move = False
+					return
 
-					self.ball.left=380
-					self.ball.top=460
-
-					self.pad.left=350
-					self.pad.top=470
-      
                         pygame.display.flip()
