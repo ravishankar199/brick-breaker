@@ -109,12 +109,10 @@ class BrickBreaker:
 
 	def controls(self):
 		self.screen.fill(self.bgcolor)
-		self.msg("Hit the bricks with the ball without letting it fall off the",15,100)
-		self.msg("paddle. The Red bricks require a single hit while the Gold",15,132)
-		self.msg("ones need two. The challenge here is that, every three",15,164)
-		self.msg("and a half minutes, one rows of bricks will be added",15,196)
-		self.msg("and you should complete the game before the bricks",15,228)
-		self.msg("reach the lower extreeme of the window!! ",15,260)
+		self.msg("Use Right and Left arrow keys to control the paddle",25,170)
+		self.msg("Press Space to Start the game",25,202)
+		self.msg("Press 'P' to pause the game",25,234)
+		self.msg("Press Backspace to go back to Menu ",250,450)
 		pygame.display.flip()
 		while True:
   			for event in pygame.event.get():
@@ -220,7 +218,6 @@ class BrickBreaker:
                                         self.ball_config[2] = -self.ball_config[2]
 				if event.type == pygame.KEYUP and event.key == pygame.K_p:
                                          move = False
-
                         if pad_left:
                                 self.pad.left -= 7
 
