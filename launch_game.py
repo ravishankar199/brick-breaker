@@ -1,11 +1,19 @@
 import pygame
 import random
+import menu as dm
+import sys
 from components import Pad, Ball, Brick
 from main import BrickBreaker
 from ConfigParser import RawConfigParser
 
 CONFIG = RawConfigParser()
 CONFIG.read('./.config')
+pygame.init()
+
+red   = 255,  0,  0
+green =   0,255,  0
+black  =   0,  0,0
+
 
 def create_bricks(row_count, col_count, width, height, special_count):
     """
@@ -19,6 +27,7 @@ def create_bricks(row_count, col_count, width, height, special_count):
     # start placing bricks from these pointers
     hor_ptr = 5
     ver_ptr = -120
+    
  
     bricks=[]
 
@@ -88,7 +97,7 @@ if __name__=='__main__':
 
     while True:
         # create new bricks before each game
-	bricks = create_bricks(game_config['brick_row_count'],
+	bricks = create_bricks(random.randint(6,11),
 	                       game_config['brick_col_count'],
 			       game_config['brick_width'],
 	                       game_config['brick_height'],
@@ -99,6 +108,19 @@ if __name__=='__main__':
     	brick_breaker = BrickBreaker(screen=screen, ball=ball[0], pad=pad[0], bricks=bricks,
                                  ball_config=ball[1],pad_config=pad[1], lives=game_config['lives'],
 				 bgcolor=game_config['screen_bgcolor'])
-
-    	# launching the game
-    	brick_breaker.main()
+	pygame.display.flip()
+	
+	choose = dm.menu(screen, [
+                        'New Game',
+                        'Manual',
+                        'Controls',
+                        'Quit Game'], 180,150,None,52,1.4,green,red)
+	if choose == 0:
+	    brick_breaker.main()
+	elif choose == 1:
+	  brick_breaker.manual()
+	elif choose == 2:
+	    brick_breaker.controls()
+	elif choose == 3:
+	    pygame.quit()
+	    sys.exit()

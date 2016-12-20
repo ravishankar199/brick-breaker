@@ -8,6 +8,7 @@ import pygame
 import sys
 import time
 import random
+import menu as dm
 
 pygame.init()
 
@@ -28,7 +29,7 @@ class BrickBreaker:
 		self.brick_colors = [(201,41,76), (255,215,0)]
 		self.lives = lives
 		self.bgcolor = bgcolor
-		self.font = pygame.font.Font(None, 50)
+		self.font = pygame.font.Font(None, 32)
 
         def draw_bricks(self):
 		"""
@@ -79,6 +80,53 @@ class BrickBreaker:
                         text = self.font.render(message, 1, fontcolor)
                         textpos = (pos_x, pos_y)
                         self.screen.blit(text, textpos)
+
+
+
+	def manual(self):
+		self.screen.fill(self.bgcolor)
+		self.msg("Hit the bricks with the ball without letting it fall off the",15,100)
+		self.msg("paddle. The Red bricks require a single hit while the Gold",15,132)
+		self.msg("ones need two. The challenge here is that, every three",15,164)
+		self.msg("and a half minutes, one rows of bricks will be added",15,196)
+		self.msg("and you should complete the game before the bricks",15,228)
+		self.msg("reach the lower extreeme of the window!! ",15,260)
+		self.msg("You win if the bricks which are completely on",15,292)
+		self.msg("the screen are destroyed",15,324)
+		self.msg("Press Backspace to go back to Menu ",250,450)
+		pygame.display.flip()
+		while True:
+  			for event in pygame.event.get():
+    				    if event.type == pygame.QUIT:
+      					  pygame.quit()
+					  sys.exit()
+				    elif event.type == pygame.KEYUP:
+					  if event.key == pygame.K_BACKSPACE:
+						 self.screen.fill((0,0,0))
+						 pygame.display.flip()
+						 return
+
+
+	def controls(self):
+		self.screen.fill(self.bgcolor)
+		self.msg("Hit the bricks with the ball without letting it fall off the",15,100)
+		self.msg("paddle. The Red bricks require a single hit while the Gold",15,132)
+		self.msg("ones need two. The challenge here is that, every three",15,164)
+		self.msg("and a half minutes, one rows of bricks will be added",15,196)
+		self.msg("and you should complete the game before the bricks",15,228)
+		self.msg("reach the lower extreeme of the window!! ",15,260)
+		pygame.display.flip()
+		while True:
+  			for event in pygame.event.get():
+    				    if event.type == pygame.QUIT:
+      					  pygame.quit()
+					  sys.exit()
+				    elif event.type == pygame.KEYUP:
+					  if event.key == pygame.K_BACKSPACE:
+						 self.screen.fill((0,0,0))
+						 pygame.display.flip()
+						 return
+
  
         def main(self):
 		"""
@@ -94,14 +142,14 @@ class BrickBreaker:
                                 
 		self.lives = 3
                 flag = False
-
 		now = pygame.time.get_ticks()
-                
                 while True:
+			
                         for event in pygame.event.get():
                                 if event.type == pygame.QUIT:
                                         pygame.quit()
 					sys.exit()
+					break
                                 elif event.type  == pygame.KEYDOWN:
                                         if event.key == pygame.K_LEFT:
                                                 pad_left = True
@@ -115,6 +163,7 @@ class BrickBreaker:
                                                 pad_left = False
                                         elif event.key == pygame.K_RIGHT:
                                                 pad_right = False
+					
 
                         if ((((pygame.time.get_ticks()-now)/1000)+1) % 210) == 0 and move:
                                 time.sleep(0.04)
@@ -150,24 +199,27 @@ class BrickBreaker:
 
 					self.lives -= 1
 					if self.lives != 0:
-						time.sleep(0.5)
+						time.sleep(1)
 						self.msg('Try again!!', 230, 100)
-						time.sleep(0.5)
+						pygame.display.flip()
+						time.sleep(1)
 
 					elif self.lives == 0:
 						self.msg('Game Over', 230, 100)
 						pygame.display.flip()
-
+						flag=0
 						self.screen.fill(self.bgcolor)
 						time.sleep(2)
-
-						return
+						
+						return	
 
 					pygame.display.flip()
                                 
 				if self.ball.colliderect(self.pad):
                                         self.ball.top = 454
                                         self.ball_config[2] = -self.ball_config[2]
+				if event.type == pygame.KEYUP and event.key == pygame.K_p:
+                                         move = False
 
                         if pad_left:
                                 self.pad.left -= 7
@@ -209,14 +261,13 @@ class BrickBreaker:
                                 	if brick.top > 0 :
                                         	brick_count += 1
 
-                        if brick_count == 0 and self.lives != 0 and not flag:
+                        if brick_count == 0 and self.lives != 0 and not flag and brick_count==0:
                                         self.msg('You Win',230 , 100)
                                         
 					pygame.display.flip()
                                         
 					self.screen.fill(self.bgcolor)
                                         time.sleep(2)
-
 					return
 
                         pygame.display.flip()
