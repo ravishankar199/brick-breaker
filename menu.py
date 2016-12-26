@@ -65,8 +65,3 @@ def menu(screen, menu, x_pos = 100, y_pos = 100, font = None,
 							exitMenu = True
 	
 	return cursorpos
-
-if __name__ == '__main__':
-	sys.stderr.write("You should import me, not start me...")
-	sys.exit()
-

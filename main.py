@@ -9,8 +9,12 @@ import sys
 import time
 import random
 import menu as dm
+from components import Background
 
 pygame.init()
+
+RED   = 255,0,0
+GREEN = 0,255,0
 
 class BrickBreaker:
         clock = pygame.time.Clock()
@@ -84,6 +88,10 @@ class BrickBreaker:
 
 
 	def manual(self):
+		"""
+		Returns manual to play
+		"""
+
 		self.screen.fill(self.bgcolor)
 		self.msg("Hit the bricks with the ball without letting it fall off the",15,100)
 		self.msg("paddle. The Red bricks require a single hit while the Gold",15,132)
@@ -108,6 +116,10 @@ class BrickBreaker:
 
 
 	def controls(self):
+		"""
+		Returns keyboard controls to play the game
+		"""
+
 		self.screen.fill(self.bgcolor)
 		self.msg("Use Right and Left arrow keys to control the paddle",25,170)
 		self.msg("Press Space to Start the game",25,202)
@@ -125,6 +137,44 @@ class BrickBreaker:
 						 pygame.display.flip()
 						 return
 
+	def pause_game(self):
+		"""
+		Pauses the game until user returns
+		"""
+
+		BackGround = Background("./paused.jpg", [0,0])
+
+		pygame.display.flip()
+                while True:
+                        for event in pygame.event.get():
+                                    if event.type == pygame.QUIT:
+                                          pygame.quit()
+                                          sys.exit()
+                                    elif event.type == pygame.KEYUP:
+                                          if event.key == pygame.K_BACKSPACE:
+                                                 return
+
+			self.screen.fill([0,0,0])
+	                self.screen.blit(BackGround.image, BackGround.rect)
+
+			# TODO: edit pause menu
+			choose = dm.menu(self.screen, [
+					'Resume',
+					'Option2',
+					'Option3',
+					'Quit Game'], 180, 150, None, 52, 1.4, GREEN, RED)
+
+			if choose == 0:
+				return
+			elif choose == 1:
+				pass
+			elif choose == 2:
+				pass
+			elif choose == 3:
+			    pygame.quit()
+			    sys.exit()
+
+			pygame.display.flip()
  
         def main(self):
 		"""
@@ -134,7 +184,8 @@ class BrickBreaker:
 		"""
                                 
 		move = False
-                
+		pause = False                
+
 		pad_left = False
                 pad_right = False
                                 
@@ -142,17 +193,21 @@ class BrickBreaker:
                 flag = False
 		now = pygame.time.get_ticks()
                 while True:
-			
+			pygame.image.save(self.screen, "paused.jpg")
+
                         for event in pygame.event.get():
                                 if event.type == pygame.QUIT:
                                         pygame.quit()
 					sys.exit()
 					break
+
                                 elif event.type  == pygame.KEYDOWN:
                                         if event.key == pygame.K_LEFT:
                                                 pad_left = True
                                         elif event.key == pygame.K_RIGHT:
                                                 pad_right = True
+					elif event.key == pygame.K_ESCAPE:
+						pause = True
 
                                 elif event.type == pygame.KEYUP:
                                         if event.key == pygame.K_SPACE:
@@ -161,8 +216,13 @@ class BrickBreaker:
                                                 pad_left = False
                                         elif event.key == pygame.K_RIGHT:
                                                 pad_right = False
-					
-
+			
+			# pause the game
+			if pause:
+				self.pause_game()
+				pause = False
+		
+			# Adds a new row of bricks every 3.5 mins
                         if ((((pygame.time.get_ticks()-now)/1000)+1) % 210) == 0 and move:
                                 time.sleep(0.04)
                                 for brcks in self.bricks:
@@ -201,7 +261,8 @@ class BrickBreaker:
 						self.msg('Try again!!', 230, 100)
 						pygame.display.flip()
 						time.sleep(1)
-
+					
+					# User lost, prepare new game
 					elif self.lives == 0:
 						self.msg('Game Over', 230, 100)
 						pygame.display.flip()
@@ -252,6 +313,8 @@ class BrickBreaker:
                         if self.lives >= 0:
                                 self.msg('Lives : {}'.format(self.lives), 240, 5)
 
+
+			# Calculating brick count to check if the user won the game
                         brick_count=0 
                         for brcks in self.bricks:
 				for brick in brcks:
