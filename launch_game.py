@@ -10,10 +10,8 @@ CONFIG = RawConfigParser()
 CONFIG.read('./.config')
 pygame.init()
 
-red   = 255,  0,  0
-green =   0,255,  0
-black  =   0,  0,0
-
+RED   = 255,0,0
+GREEN = 0,255,0
 
 def create_bricks(row_count, col_count, width, height, special_count):
     """
@@ -110,11 +108,12 @@ if __name__=='__main__':
 				 bgcolor=game_config['screen_bgcolor'])
 	pygame.display.flip()
 	
+	# Game Menu
 	choose = dm.menu(screen, [
                         'New Game',
                         'Manual',
                         'Controls',
-                        'Quit Game'], 180,150,None,52,1.4,green,red)
+                        'Quit Game'], 180, 150, None, 52, 1.4, GREEN, RED)
 	if choose == 0:
 	    brick_breaker.main()
 	elif choose == 1:
